@@ -13,6 +13,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 
+use Symfony\Component\Serializer\Attribute\Groups;
+
 #[ApiResource(
     operations: [
         new Get(),
@@ -20,6 +22,12 @@ use ApiPlatform\Metadata\Delete;
         new Post(),
         new Put(),
         new Delete()
+    ],
+    normalizationContext: [
+        'groups' => ['task:read']
+    ],
+    denormalizationContext: [
+        'groups' => ['task:write']
     ]
 )]
 
@@ -29,15 +37,19 @@ class Task
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['task:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['task:read', 'task:write'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['task:read', 'task:write'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['task:read', 'task:write'])]
     private ?string $status = null;
 
     public function getId(): ?int
